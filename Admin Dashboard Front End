@@ -1,0 +1,183 @@
+import React, { useState, useEffect } from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  BarChart,
+  Users,
+  Settings,
+  LogOut,
+  Menu
+} from 'lucide-react';
+
+// Login Component
+const Login = ({ onLogin }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        onLogin(data.user);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <Card className="w-96 p-8">
+        <h1 className="text-2xl font-bold mb-6 text-center">Admin Login</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full"
+          />
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full"
+          />
+          <Button type="submit" className="w-full">
+            Login
+          </Button>
+        </form>
+      </Card>
+    </div>
+  );
+};
+
+// Dashboard Component
+const Dashboard = ({ user, onLogout }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('dashboard');
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    onLogout();
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Sidebar */}
+      <div className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg transform ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out`}>
+        <div className="p-4">
+          <h1 className="text-xl font-bold">Admin Dashboard</h1>
+        </div>
+        <nav className="mt-8">
+          <button 
+            onClick={() => setActiveTab('dashboard')}
+            className={`flex items-center px-4 py-3 w-full text-left ${activeTab === 'dashboard' ? 'bg-gray-100' : ''} hover:bg-gray-100`}
+          >
+            <BarChart className="mr-3" /> Dashboard
+          </button>
+          <button 
+            onClick={() => setActiveTab('users')}
+            className={`flex items-center px-4 py-3 w-full text-left ${activeTab === 'users' ? 'bg-gray-100' : ''} hover:bg-gray-100`}
+          >
+            <Users className="mr-3" /> Users
+          </button>
+          <button 
+            onClick={() => setActiveTab('settings')}
+            className={`flex items-center px-4 py-3 w-full text-left ${activeTab === 'settings' ? 'bg-gray-100' : ''} hover:bg-gray-100`}
+          >
+            <Settings className="mr-3" /> Settings
+          </button>
+        </nav>
+      </div>
+
+      {/* Main Content */}
+      <div className="md:ml-64 p-8">
+        <div className="flex justify-between items-center mb-8">
+          <Button
+            className="md:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <Menu />
+          </Button>
+          <div className="flex items-center">
+            <span className="mr-4">{user.email}</span>
+            <Button
+              variant="outline"
+              onClick={handleLogout}
+            >
+              <LogOut className="mr-2" /> Logout
+            </Button>
+          </div>
+        </div>
+
+        {/* Dashboard Content */}
+        {activeTab === 'dashboard' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Total Users</h2>
+              <p className="text-3xl font-bold">1,234</p>
+            </Card>
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Active Sessions</h2>
+              <p className="text-3xl font-bold">56</p>
+            </Card>
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Revenue</h2>
+              <p className="text-3xl font-bold">$12,345</p>
+            </Card>
+          </div>
+        )}
+
+        {/* Users Content */}
+        {activeTab === 'users' && (
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-4">User Management</h2>
+            <p>User management content goes here</p>
+          </Card>
+        )}
+
+        {/* Settings Content */}
+        {activeTab === 'settings' && (
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Settings</h2>
+            <p>Settings content goes here</p>
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Main App Component
+const App = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Check for existing token on mount
+    const token = localStorage.getItem('token');
+    if (token) {
+      // You might want to validate the token with your backend here
+      // For now, we'll just assume it's valid
+      const userData = { email: 'admin@example.com' }; // Replace with actual user data
+      setUser(userData);
+    }
+  }, []);
+
+  return user ? (
+    <Dashboard user={user} onLogout={() => setUser(null)} />
+  ) : (
+    <Login onLogin={setUser} />
+  );
+};
+
+export default App;
