@@ -1,0 +1,168 @@
+//Project Setup
+
+1. **Project Setup**
+```bash
+# Install Angular CLI globally
+npm install -g @angular/cli
+
+# Create new project
+ng new ecommerce-frontend
+cd ecommerce-frontend
+
+# Install required dependencies
+npm install @angular/material @angular/flex-layout @auth0/angular-jwt
+```
+
+Update package.json Dependencies
+
+{
+  "dependencies": {
+    "@angular/animations": "^17.x.x",
+    "@angular/cdk": "^17.x.x",
+    "@angular/common": "^17.x.x",
+    "@angular/compiler": "^17.x.x",
+    "@angular/core": "^17.x.x",
+    "@angular/flex-layout": "^15.0.0-beta.42",
+    "@angular/forms": "^17.x.x",
+    "@angular/material": "^17.x.x",
+    "@angular/platform-browser": "^17.x.x",
+    "@angular/platform-browser-dynamic": "^17.x.x",
+    "@angular/router": "^17.x.x",
+    "@auth0/angular-jwt": "^5.x.x",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.14.2"
+  }
+}
+
+
+Add Angular Material to your project
+
+ng add @angular/material
+
+
+Update tsconfig.json
+
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "useDefineForClassFields": false,
+    "lib": [
+      "ES2022",
+      "dom"
+    ]
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
+}
+
+Create proper folder structure
+
+mkdir -p src/app/components/auth/login
+mkdir -p src/app/components/auth/register
+mkdir -p src/app/services
+mkdir -p src/app/guards
+
+//Import required modules in app.module.ts
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FlexLayoutModule } from '@angular/flex-layout';
+
+// Material Imports
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { AuthModule } from './auth/auth.module';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    FlexLayoutModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatCardModule,
+    MatInputModule,
+    MatIconModule,
+    AuthModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+Run the application
+
+# Install dependencies
+npm install
+
+# Serve the application
+ng serve
+
+Common errors and solutions:
+
+@angular/flex-layout Error
+
+
+# If you get flex-layout compatibility issues, install a specific version:
+npm uninstall @angular/flex-layout
+npm install @angular/flex-layout@15.0.0-beta.42
+
+
+
+Module not found errors
+
+# Clear cache and reinstall node modules
+rm -rf node_modules
+npm cache clean --force
+npm install
+
+Angular Material errors
+
+# Reinstall Angular Material
+ng add @angular/material
+
+
+TypeScript version mismatch
+
+# Update TypeScript to match Angular version
+npm install typescript@~5.2.2
+
+Compilation errors
+
+# Check if all decorators are properly imported
+# Make sure all components are declared in a module
+# Verify that all required modules are imported
+
+
+
+After following these steps, your application should compile without errors. If you encounter any specific errors, please share them and I'll help you resolve them!
